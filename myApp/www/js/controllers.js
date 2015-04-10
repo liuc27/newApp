@@ -207,10 +207,10 @@ $scope.showAlreadyRegistered = types.getUserName()
 
                     promise.then(function(greeting) {
                         //console.log(localStorageService.get("usernameDate"));
-                        alert('Success: ' + greeting);
+                        //alert('Success: ' + greeting);
                         $state.go('tab.coupon');
                     }, function(reason) {
-                        alert('Failed: ' + reason);
+                        //alert('Failed: ' + reason);
                         $state.go('tab.coupon');
                     });
 

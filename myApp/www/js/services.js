@@ -3,10 +3,10 @@ angular.module('starter.services', [])
 /**
  * A simple example service that returns some data.
  */
-    .factory('types', function ($rootScope, $http, localStorageService, $q, $state) {
+    .factory('types', function ($rootScope, $http, localStorageService, $q, $state,$ionicPopup) {
         var items = [];
         var checked = new Array();
-var showAlreadyRegistered;
+var showAlreadyRegistered = null;
         var xxxxx;
 
         var promise1 = $q(function(resolve, reject) {
@@ -19,15 +19,19 @@ var showAlreadyRegistered;
                 }
             }, 10);
         });
-
+//localStorageService.clearAll();
         promise1.then(function(xxxxxx) {
             //console.log(localStorageService.get("usernameDate"));
-            alert('已登录帐号: ' + xxxxxx);
+            $ionicPopup.alert({
+                title: '已登录帐号: ' + xxxxxx
+            });
             showAlreadyRegistered = xxxxxx
             $state.go('tab.coupon');
         }, function(reason) {
-            alert('Failed: ');
-            //$state.go('tab.coupon');
+            $ionicPopup.alert({
+                title: '请注册帐号'
+            });
+            $state.go('tab.register');
         });
 
         var i, theChecked = new Array();
