@@ -1,0 +1,22 @@
+<ion-view title="<b>已领取">
+  <ion-nav-buttons side="left">
+    <button menu-toggle="left" class="button button-icon icon ion-navicon" ng-click="doSomething()">
+    </button>
+  </ion-nav-buttons>
+  <ion-content has-header="true" class="padding">
+    <div class="product bordLine list" collection-repeat="item in items| reverse | filter:checked._id :strict ">
+      <a href="#/tab/favoriteList/{{item.id}}" class="item item-thumbnail-left borderRadius5">
+        <img class="product_image" ng-src="{{ item.image }}">
+        <div class="category ion-heart">已领取</div>
+        <ul>
+          <li  lang="zh-cn" class="productName"><b>{{item.name}}</li>
+          <li  lang="zh-cn" class="productIntroduction"><b>{{item.productIntroduction}}</li>
+          <li  lang="zh-cn" class="productDate">{{item.timeLimit|date:'至yyyy年MM月dd日'}}</li>
+        </ul>
+      </a>
+    </div>
+  </ion-content>
+</ion-view>
+
+
+

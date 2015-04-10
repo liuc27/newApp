@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<ion-view title="{{favoriteCoupon.name}}">
+  <ion-content has-header="true" padding="true">
+    <div class="list card pink">
+
+      <div class="item item-avatar">
+          <div class="productName">{{favoriteCoupon.productName}}</div>
+          <div class="productDate alignLeft">{{favoriteCoupon.timeLimit|date:'至yyyy年MM月dd日'}}</div>
+        <div class="addToCart">
+          <button ng-class="favorites" ng-init="changeClass()">{{favoritesText}}</button>
+        </div>
+      </div>
+
+      <div class="item item-body">
+        <img class="full-image" src="{{favoriteCoupon.image}}">
+        <p font>
+          {{favoriteCoupon.productDetail}}
+        </p>
+        <p>
+          <a href="#" class="subdued font">1 顶</a>
+          <a href="#" class="subdued font">{{comment.length}}评价</a>
+        </p>
+      </div>
+
+      <div class="item tabs tabs-secondary tabs-icon-left">
+        <a class="tab-item" href="#">
+          <i class="icon ion-thumbsup"></i>
+          顶
+        </a>
+        <a class="tab-item" ng-click="showComment=!showComment">
+          <i class="icon ion-chatbox"></i>
+          评价
+        </a>
+        <!--<a class="tab-item" href="#">
+<i class="icon ion-share"></i>
+分享
+</a>-->
+      </div>
+      <div ng-repeat = "xxx in comment">
+        <div>{{xxx.title}}</div>
+        <div>{{xxx.date|date:'yyyy年MM月dd日HH时mm分'}}</div>
+      </div>
+      <div ng-show="showComment">
+        <input class="comment" type="text" ng-model="comment.comment">
+        <button ng-click="submitComment()">提交</button>
+      </div>
+      <div>{{comment.comment}}</div>
+    </div>
+  </ion-content>
+</ion-view>
