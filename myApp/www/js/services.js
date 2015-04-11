@@ -17,7 +17,7 @@ angular.module('starter.services', [])
                 } else {
                     reject('出错咯,开始抢折扣卷吧!');
                 }
-            }, 10);
+            }, 100);
         });
         //localStorageService.clearAll();
         promise1.then(function(xxxxxx) {
