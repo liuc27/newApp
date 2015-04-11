@@ -28,9 +28,11 @@ angular.module('starter.controllers', [])
         $scope.items = types.allItems();
     })
 
-    .controller('CouponDetailCtrl', function ($scope, $stateParams, localStorageService, $ionicPopup, types, $http) {
+    .controller('CouponDetailCtrl', function ($rootScope,$scope, $stateParams, localStorageService, $ionicPopup, types, $http) {
 
         $scope.items = types.allItems();
+        $scope.possession = types.checkPossession()
+
         console.log("stateParams are");
         console.log($stateParams);
         console.log($scope.items)
@@ -65,9 +67,13 @@ angular.module('starter.controllers', [])
 
         $scope.changeClass = function () {
             var couponName = $scope.coupon.name
-            var username = $scope.showAlreadyRegistered
+            var username = $rootScope.showAlreadyRegistered
+            console.log(username)
+            console.log($scope.showAlreadyRegistered)
+
             var _id = $scope.coupon._id
             if ($scope.favoritesText === "点击领取") {
+                console.log(username)
                 $http.post("http://localhost:3000/api/add", {
                     "name": couponName,
                     "username": username,
@@ -77,16 +83,17 @@ angular.module('starter.controllers', [])
                     if (data === "couldn't find") {
                         $ionicPopup.alert({
                             title: '非常抱歉,库存不足'
-                        });
-                        $scope.favoritesText = "无法领取";
+                        })
+                        $scope.favoritesText = "无法领取"
                     } else {
                         $ionicPopup.alert({
                             title: '恭喜,成功领取!'
                         });
-                        $scope.favoritesText = "已经领取";
-                        $scope.favorites = "button icon-left ion-heart button-positive";
-                        $scope.coupon.numbers = data;
-                        console.log(data);
+                        $scope.favoritesText = "已经领取"
+                        $scope.favorites = "button icon-left ion-heart button-positive"
+                        $scope.coupon.numbers = data
+                        $scope.possession.push(_id)
+                        console.log(data)
                     }
                 })
             }
@@ -94,7 +101,7 @@ angular.module('starter.controllers', [])
 
         $scope.favoriteClass = function () {
             var exist = false
-            angular.forEach(types.checkPossession(), function (value) {
+            angular.forEach($scope.possession, function (value) {
                 if (value == $scope.coupon._id) {
                     exist = true;
                 }
@@ -105,56 +112,11 @@ angular.module('starter.controllers', [])
                 $scope.isDisabled = true
             }
         };
-        /*
-
-
-         $scope.changeClass = function () {
-         var couponName = $scope.coupon.name
-         if ($scope.favoritesText === "点击领取" && $scope.clicked == false) {
-         var notExist = true;
-         $scope.clicked = true;
-         angular.forEach($scope.checked, function (value) {
-         if (value._id == $scope.coupon._id) {
-         notExist = false;
-         }
-         });
-         if (notExist) {
-         $http.post("http://localhost:3000/api/add", {
-         "name": couponName
-         }).success(function (data) {
-         if (data === "couldn't find") {
-         $ionicPopup.alert({
-         title: '非常抱歉,库存不足'
-         });
-         $scope.favoritesText = "无法领取";
-         } else {
-         $ionicPopup.alert({
-         title: '恭喜,成功领取!'
-         });
-         $scope.favoritesText = "已经领取";
-         $scope.favorites = "button icon-left ion-heart button-positive";
-         $scope.items[$scope.coupon.id].numbers--
-         var newCoupon = angular.copy($scope.coupon);
-
-         console.log(newCoupon)
-         $scope.checked.push({"_id":newCoupon._id})
-         console.log(newCoupon._id)
-         var newCoupon = angular.copy($scope.checked)
-         localStorageService.set("checkedData", $scope.checked);
-         }
-         });
-         }
-         }
-         }*/
     })
 
     .controller('favoriteListCtrl', function ($scope, $stateParams, localStorageService, types) {
         //localStorageService.clearAll()
-        $scope.types = types.all();
         $scope.items = types.allItems();
-        $scope.coupon = types.fetch($stateParams.couponId);
-        $scope.favorites = "button icon-left ion-plus button-positive";
-        $scope.favoritesText = "点击领取";
         $scope.possession = types.checkPossession();
     })
 
@@ -205,13 +167,13 @@ angular.module('starter.controllers', [])
     .controller('MenuCtrl', function ($scope, types, $http, $ionicSideMenuDelegate, localStorageService,$state,$q) {
 
     })
-    .controller('AccountCtrl', function ($scope,$ionicPopup, $ionicSideMenuDelegate,localStorageService, types, $http,$state,$q) {
+    .controller('AccountCtrl', function ($rootScope,$scope,$ionicPopup, $ionicSideMenuDelegate,localStorageService, types, $http,$state,$q) {
 
 
         $scope.showAlreadyRegistered = types.getUserName()
 
         $scope.register = function (username, password) {
-            $http.post("http://localhost:3000/api/user", {
+            $http.post("http://localhost:3000/api/register", {
                 "username": username,
                 "password": password
             }).success(function (data) {
@@ -220,6 +182,10 @@ angular.module('starter.controllers', [])
                         title: '用户名已经注册，请换用户名！'
                     });
                 } else {
+                    $rootScope.showAlreadyRegistered = username
+
+                    console.log(username)
+                    console.log($rootScope.showAlreadyRegistered)
                     $ionicPopup.alert({
                         title: '注册成功！已自动登录!'
                     });
@@ -235,8 +201,9 @@ angular.module('starter.controllers', [])
                     });
 
                     promise.then(function(greeting) {
-                        //console.log(localStorageService.get("usernameDate"));
+                       // console.log(localStorageService.get("usernameDate"));
                         //alert('Success: ' + greeting);
+
                         $state.go('tab.coupon');
                     }, function(reason) {
                         //alert('Failed: ' + reason);

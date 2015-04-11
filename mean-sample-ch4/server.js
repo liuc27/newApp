@@ -117,11 +117,13 @@ app.post('/api/user', function (req, res, next) {
         username: req.body.username
     }, function (err, data) {
         console.log(data)
+        console.log(req.body.username)
         if (err) {
             return next(err)
         } else {
-            console.log(data[0].possession)
+            console.log(data)
             res.json(data[0].possession)
+
         }
     })
 })
@@ -155,7 +157,7 @@ app.post('/api/add', function (req, res, next) {
         }, {
             $push: {
                 "possession": req.body._id
-            }
+            },
         }, function () {
             Post.find({
                 name: req.body.name
@@ -230,7 +232,7 @@ app.post('/api/replace', function (req, res, next) {
     })
 })
 
-app.post('/api/user', function (req, res, next) {
+app.post('/api/register', function (req, res, next) {
     var name = req.body.username
     var password = req.body.password
     User.find({}, function (err, data) {

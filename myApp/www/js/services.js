@@ -7,7 +7,7 @@ angular.module('starter.services', [])
         var items = [];
         var checked = new Array();
         var showAlreadyRegistered = null;
-        var xxxxx,possession;
+        var xxxxx,possession=[];
 
         var promise1 = $q(function(resolve, reject) {
             setTimeout(function() {
