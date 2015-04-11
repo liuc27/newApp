@@ -6,7 +6,7 @@
     <ion-content class="padding">
         <ion-refresher pulling-text="刷新中" on-refresh="doRefresh()">
         </ion-refresher>
-        <div class="product bordLine list  borderRadius" collection-repeat="item in items | orderBy :'id'">
+        <div class="product bordLine list  borderRadius" collection-repeat="item in items | orderBy :'-id'">
             <a href="#/tab/coupon-detail/{{item.id}}" class=" item item-thumbnail-left borderRadius5">
                 <img class="product_image" ng-src="{{ item.image }}">
                 <div lang="zh-cn" class="category" ng-if="item.numbers>0">剩{{item.numbers}}</div>

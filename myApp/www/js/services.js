@@ -6,8 +6,8 @@ angular.module('starter.services', [])
     .factory('types', function ($rootScope, $http, localStorageService, $q, $state,$ionicPopup) {
         var items = [];
         var checked = new Array();
-var showAlreadyRegistered = null;
-        var xxxxx;
+        var showAlreadyRegistered = null;
+        var xxxxx,possession;
 
         var promise1 = $q(function(resolve, reject) {
             setTimeout(function() {
@@ -19,13 +19,19 @@ var showAlreadyRegistered = null;
                 }
             }, 10);
         });
-//localStorageService.clearAll();
+        //localStorageService.clearAll();
         promise1.then(function(xxxxxx) {
             //console.log(localStorageService.get("usernameDate"));
             $ionicPopup.alert({
                 title: '已登录帐号: ' + xxxxxx
             });
             showAlreadyRegistered = xxxxxx
+            $http.post("http://localhost:3000/api/user", {
+                "username": xxxxxx,
+            }).success(function (data) {
+                possession = data;
+                console.log(possession)
+            })
             $state.go('tab.coupon');
         }, function(reason) {
             $ionicPopup.alert({
@@ -84,10 +90,13 @@ var showAlreadyRegistered = null;
                 return checked;
             },
             comment: function (couponId) {
-                return items[couponId].comment;
+                return items[couponId].comment
             },
             getUserName: function(){
-                return showAlreadyRegistered;
+                return showAlreadyRegistered
+            },
+            checkPossession: function(){
+                return possession
             }
         }
     });

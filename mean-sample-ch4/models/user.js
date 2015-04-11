@@ -11,7 +11,7 @@ var Schema = {
     phonenumber: {
         type: String,
     },
-    possession:[]
+    possession: []
 }
 
 var user = db.model('user', Schema)

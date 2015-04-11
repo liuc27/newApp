@@ -6,19 +6,17 @@ angular.module('starter.controllers', [])
 
             $scope.items = types.allItems()
             $scope.checked = types.favoriteList()
-            console.log($scope.items)
+            console.log(types.checkPossession())
+            $scope.find = function(item) {
+                var exist = false;
+                angular.forEach(types.checkPossession(), function (value) {
+                    if (value == item._id) {
+                        exist = true;
+                    }
+                });
+                return exist;
+            }
         },100);
-        /*
-         $scope.find = function(item) {
-         angular.forEach($scope.checked, function (value) {
-         if (value._id == item._id) {
-         return true;
-         }else{
-         return false;
-         }
-         });
-         }
-         */
     })
 
     .controller('typesCtrl', function ($scope, types) {
@@ -65,58 +63,89 @@ angular.module('starter.controllers', [])
             })
         };
 
-        var exist;
-/*
+        $scope.changeClass = function () {
+            var couponName = $scope.coupon.name
+            var username = $scope.showAlreadyRegistered
+            var _id = $scope.coupon._id
+            if ($scope.favoritesText === "点击领取") {
+                $http.post("http://localhost:3000/api/add", {
+                    "name": couponName,
+                    "username": username,
+                    "_id": _id
+
+                }).success(function (data) {
+                    if (data === "couldn't find") {
+                        $ionicPopup.alert({
+                            title: '非常抱歉,库存不足'
+                        });
+                        $scope.favoritesText = "无法领取";
+                    } else {
+                        $ionicPopup.alert({
+                            title: '恭喜,成功领取!'
+                        });
+                        $scope.favoritesText = "已经领取";
+                        $scope.favorites = "button icon-left ion-heart button-positive";
+                        $scope.coupon.numbers = data;
+                        console.log(data);
+                    }
+                })
+            }
+        }
+
         $scope.favoriteClass = function () {
-            angular.forEach($scope.checked, function (value) {
-                if (value._id == $scope.coupon._id) {
+            var exist = false
+            angular.forEach(types.checkPossession(), function (value) {
+                if (value == $scope.coupon._id) {
                     exist = true;
                 }
-            });
+            })
             if (exist) {
                 $scope.favorites = "button icon-left ion-heart button-positive";
                 $scope.favoritesText = "已经领取";
+                $scope.isDisabled = true
             }
         };
+        /*
 
-        $scope.changeClass = function () {
-            var couponName = $scope.coupon.name
-            if ($scope.favoritesText === "点击领取" && $scope.clicked == false) {
-                var notExist = true;
-                $scope.clicked = true;
-                angular.forEach($scope.checked, function (value) {
-                    if (value._id == $scope.coupon._id) {
-                        notExist = false;
-                    }
-                });
-                if (notExist) {
-                    $http.post("http://localhost:3000/api/add", {
-                        "name": couponName
-                    }).success(function (data) {
-                        if (data === "couldn't find") {
-                            $ionicPopup.alert({
-                                title: '非常抱歉,库存不足'
-                            });
-                            $scope.favoritesText = "无法领取";
-                        } else {
-                            $ionicPopup.alert({
-                                title: '恭喜,成功领取!'
-                            });
-                            $scope.favoritesText = "已经领取";
-                            $scope.favorites = "button icon-left ion-heart button-positive";
-                            $scope.items[$scope.coupon.id].numbers--
-                            var newCoupon = angular.copy($scope.coupon);
 
-                            console.log(newCoupon)
-                            $scope.checked.push({"_id":newCoupon._id})
-                            console.log(newCoupon._id)
-                            var newCoupon = angular.copy($scope.checked)
-                            localStorageService.set("checkedData", $scope.checked);
-                        }
-                    });
-                }
-            }
-        }*/
+         $scope.changeClass = function () {
+         var couponName = $scope.coupon.name
+         if ($scope.favoritesText === "点击领取" && $scope.clicked == false) {
+         var notExist = true;
+         $scope.clicked = true;
+         angular.forEach($scope.checked, function (value) {
+         if (value._id == $scope.coupon._id) {
+         notExist = false;
+         }
+         });
+         if (notExist) {
+         $http.post("http://localhost:3000/api/add", {
+         "name": couponName
+         }).success(function (data) {
+         if (data === "couldn't find") {
+         $ionicPopup.alert({
+         title: '非常抱歉,库存不足'
+         });
+         $scope.favoritesText = "无法领取";
+         } else {
+         $ionicPopup.alert({
+         title: '恭喜,成功领取!'
+         });
+         $scope.favoritesText = "已经领取";
+         $scope.favorites = "button icon-left ion-heart button-positive";
+         $scope.items[$scope.coupon.id].numbers--
+         var newCoupon = angular.copy($scope.coupon);
+
+         console.log(newCoupon)
+         $scope.checked.push({"_id":newCoupon._id})
+         console.log(newCoupon._id)
+         var newCoupon = angular.copy($scope.checked)
+         localStorageService.set("checkedData", $scope.checked);
+         }
+         });
+         }
+         }
+         }*/
     })
 
     .controller('favoriteListCtrl', function ($scope, $stateParams, localStorageService, types) {
@@ -126,7 +155,7 @@ angular.module('starter.controllers', [])
         $scope.coupon = types.fetch($stateParams.couponId);
         $scope.favorites = "button icon-left ion-plus button-positive";
         $scope.favoritesText = "点击领取";
-        $scope.checked = types.favoriteList();
+        $scope.possession = types.checkPossession();
     })
 
     .controller('favoriteDetailCtrl', function ($scope, $stateParams, localStorageService, types, $http) {
@@ -179,7 +208,7 @@ angular.module('starter.controllers', [])
     .controller('AccountCtrl', function ($scope,$ionicPopup, $ionicSideMenuDelegate,localStorageService, types, $http,$state,$q) {
 
 
-$scope.showAlreadyRegistered = types.getUserName()
+        $scope.showAlreadyRegistered = types.getUserName()
 
         $scope.register = function (username, password) {
             $http.post("http://localhost:3000/api/user", {

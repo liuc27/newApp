@@ -5,7 +5,7 @@
     <div class="list card pink">
 
       <div class="item item-avatar">
-        <div class="productName">{{coupon.productName}}</div>
+        <div class="productName">剩余{{coupon.numbers}}</div>
         <div class="productDate alignLeft">{{coupon.timeLimit|date:'至yyyy年MM月dd日'}}</div>
         <div class="addToCart">
           <button ng-class="favorites" ng-if="coupon.numbers>0" ng-init="favoriteClass()" ng-click="changeClass()" ng-disabled="{{isDisabled}}">{{favoritesText}}</button>
