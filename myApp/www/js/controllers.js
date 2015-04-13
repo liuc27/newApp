@@ -1,11 +1,10 @@
 angular.module('starter.controllers', [])
 
-    .controller('CouponCtrl', function ($scope, localStorageService, types) {
+    .controller('CouponCtrl', function ($scope, localStorageService, types, things) {
 
-        setTimeout(function() {
-
-            $scope.items = types.allItems()
-            $scope.checked = types.favoriteList()
+       // setTimeout(function() {
+            console.log(things)
+            $scope.items = things.data
             console.log(types.checkPossession())
             $scope.find = function(item) {
                 var exist = false;
@@ -16,7 +15,7 @@ angular.module('starter.controllers', [])
                 });
                 return exist;
             }
-        },100);
+       // },100);
     })
 
     .controller('typesCtrl', function ($scope, types) {
