@@ -22,9 +22,9 @@ angular.module('starter.controllers', [])
         $scope.types = types.all();
     })
 
-    .controller('typeDetailCtrl', function ($scope, $stateParams, types) {
+    .controller('typeDetailCtrl', function ($scope, $stateParams, types, things) {
         $scope.type = types.get($stateParams.typeId);
-        $scope.items = types.allItems();
+        $scope.items = things.data;
     })
 
     .controller('CouponDetailCtrl', function ($rootScope,$scope, $stateParams, localStorageService, $ionicPopup, types, $http) {
@@ -116,9 +116,9 @@ angular.module('starter.controllers', [])
         };
     })
 
-    .controller('favoriteListCtrl', function ($scope, $stateParams, localStorageService, types) {
+    .controller('favoriteListCtrl', function ($scope, $stateParams, localStorageService, types, things) {
         //localStorageService.clearAll()
-        $scope.items = types.allItems();
+        $scope.items = things.data;
         $scope.possession = types.checkPossession();
     })
 
@@ -166,13 +166,16 @@ angular.module('starter.controllers', [])
         };
 
     })
+    .controller('AccountCtrl', function ($scope, types, $http, $ionicSideMenuDelegate, localStorageService,$state,$q) {
+
+    })
     .controller('MenuCtrl', function ($scope, types, $http, $ionicSideMenuDelegate, localStorageService,$state,$q) {
 
     })
-    .controller('AccountCtrl', function ($rootScope,$scope,$ionicPopup, $ionicSideMenuDelegate,localStorageService, types, $http,$state,$q) {
+    .controller('registerCtrl', function ($rootScope,$scope,$ionicPopup, $ionicSideMenuDelegate,localStorageService, types, $http, $state, $q, preLoadAccount) {
 
-
-        $scope.showAlreadyRegistered = types.getUserName()
+console.log(preLoadAccount)
+        $scope.showAlreadyRegistered = preLoadAccount
 
         $scope.register = function (username, password) {
             $http.post("http://localhost:3000/api/register", {
