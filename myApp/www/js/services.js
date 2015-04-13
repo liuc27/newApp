@@ -96,6 +96,9 @@ angular.module('starter.services', [])
             },
             checkPossession: function(){
                 return possession
+            },
+            autoLoginAccount: function(){
+                return localStorageService.get("usernameData")
             }
         }
     });
