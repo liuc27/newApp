@@ -83,7 +83,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       views: {
         'tab-coupon': {
           templateUrl: 'templates/tab-coupon.html',
-          controller: 'CouponCtrl'
+          controller: 'CouponCtrl',
+          resolve: {
+            things: function(types) {
+              return types.allItems()
+            }
+          }
         }
       }
     })
