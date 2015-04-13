@@ -67,13 +67,16 @@ angular.module('starter.controllers', [])
 
         $scope.changeClass = function () {
             var couponName = $scope.coupon.name
-            var username = $rootScope.showAlreadyRegistered
-            console.log(username)
-            console.log($scope.showAlreadyRegistered)
+
+                var username = $rootScope.showAlreadyRegistered ? $rootScope.showAlreadyRegistered : localStorageService.get("usernameData")
+                    console.log(username)
+                console.log($rootScope.showAlreadyRegistered)
 
             var _id = $scope.coupon._id
             if ($scope.favoritesText === "点击领取") {
+                console.log(couponName)
                 console.log(username)
+                console.log(_id)
                 $http.post("http://localhost:3000/api/add", {
                     "name": couponName,
                     "username": username,
@@ -93,7 +96,7 @@ angular.module('starter.controllers', [])
                         $scope.favorites = "button icon-left ion-heart button-positive"
                         $scope.coupon.numbers = data
                         $scope.possession.push(_id)
-                        console.log(data)
+                        //console.log(data)
                     }
                 })
             }
@@ -201,7 +204,7 @@ angular.module('starter.controllers', [])
                     });
 
                     promise.then(function(greeting) {
-                       // console.log(localStorageService.get("usernameDate"));
+                        console.log(localStorageService.get("usernameData"));
                         //alert('Success: ' + greeting);
 
                         $state.go('tab.coupon');
