@@ -2,7 +2,6 @@ angular.module('starter.controllers', [])
 
     .controller('CouponCtrl', function ($scope, localStorageService, types, things) {
 
-       // setTimeout(function() {
             console.log(things)
             $scope.items = things.data
             console.log(types.checkPossession())
@@ -15,7 +14,6 @@ angular.module('starter.controllers', [])
                 });
                 return exist;
             }
-       // },100);
     })
 
     .controller('typesCtrl', function ($scope, types) {
@@ -27,9 +25,9 @@ angular.module('starter.controllers', [])
         $scope.items = things.data;
     })
 
-    .controller('CouponDetailCtrl', function ($rootScope,$scope, $stateParams, localStorageService, $ionicPopup, types, $http) {
+    .controller('CouponDetailCtrl', function ($rootScope,$scope, $stateParams, localStorageService, $ionicPopup, types, $http, things) {
 
-        $scope.items = types.allItems();
+        $scope.items = things.data;
         $scope.possession = types.checkPossession()
 
         console.log("stateParams are");
