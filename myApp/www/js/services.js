@@ -64,12 +64,6 @@ angular.module('starter.services', [])
             }
         ];
 
-        $http.get("http://localhost:3000/api/posts").success(function (data) {
-            console.log(data.length)
-            console.log(data)
-            items = data
-        })
-
         return {
             all: function () {
                 return types;
@@ -84,7 +78,12 @@ angular.module('starter.services', [])
                 return checked[couponId];
             },
             allItems: function () {
-                return items
+                return  $http.get("http://localhost:3000/api/posts").success(function (data) {
+                    console.log(data.length)
+                    console.log(data)
+                    items = data
+                    return data
+                })
             },
             favoriteList: function () {
                 return checked;
