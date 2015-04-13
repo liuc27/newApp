@@ -95,9 +95,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
                 templateUrl: 'templates/tab-coupon.html',
                 controller: 'CouponCtrl',
                 resolve: {
-                  things: function(types) {
-                    return types.allItems()
-                  }
+                    things: function(types) {
+                        return types.allItems()
+                    },
+                    preLoadAccount: function(types) {
+                        return types.autoLoginAccount()
+                    }
                 }
               }
             }
@@ -108,7 +111,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
             views: {
               'tab-coupon': {
                 templateUrl: 'templates/tab-coupon-detail.html',
-                controller: 'CouponDetailCtrl'
+                controller: 'CouponDetailCtrl',
+                  resolve: {
+                      things: function(types) {
+                          return types.allItems()
+                      }
+                  }
               }
             }
           })
@@ -147,7 +155,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
             views: {
               'tab-types': {
                 templateUrl: 'templates/tab-coupon-detail.html',
-                controller: 'CouponDetailCtrl'
+                controller: 'CouponDetailCtrl',
               }
             }
           })
