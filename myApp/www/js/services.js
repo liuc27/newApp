@@ -9,38 +9,38 @@ angular.module('starter.services', [])
         var showAlreadyRegistered = null;
         var xxxxx,possession=[];
 
-        var promise1 = $q(function(resolve, reject) {
-            setTimeout(function() {
+        // localStorageService.clearAll();
 
-                if (xxxxx = localStorageService.get("usernameData")) {
-                    resolve(xxxxx);
-                } else {
-                    reject('出错咯,开始抢折扣卷吧!');
-                }
-            }, 100);
-        });
-        //localStorageService.clearAll();
-        promise1.then(function(xxxxxx) {
-            //console.log(localStorageService.get("usernameDate"));
+        console.log(localStorageService.get("usernameData"))
+
+        if(localStorageService.get("usernameData") === null){
             $ionicPopup.alert({
-                title: '已登录帐号: ' + xxxxxx
+                title: '请注册帐号'
             });
-            showAlreadyRegistered = xxxxxx
+            setTimeout(function() {
+                $state.go('tab.register');
+            },100)
+
+        }else{
+
+            xxxxx = localStorageService.get("usernameData")
+            $ionicPopup.alert({
+                title: '已登录帐号: ' + xxxxx
+            });
+            showAlreadyRegistered = xxxxx
+            console.log(xxxxx)
             $http.post("http://localhost:3000/api/user", {
-                "username": xxxxxx,
+                "username": xxxxx,
             }).success(function (data) {
                 possession = data;
                 console.log(possession)
             })
-            $state.go('tab.coupon');
-        }, function(reason) {
-            $ionicPopup.alert({
-                title: '请注册帐号'
-            });
-            $state.go('tab.register');
-        });
+            setTimeout(function() {
+                $state.go('tab.coupon');
+            },100)
 
-        var i, theChecked = new Array();
+        }
+
         var types = [
             {
                 id: 0,
@@ -90,7 +90,7 @@ angular.module('starter.services', [])
                 return checked;
             },
             comment: function (couponId) {
-                return items[couponId].comment
+                return (items[couponId].comment) ? items[couponId].comment : false;
             },
             getUserName: function(){
                 return showAlreadyRegistered
@@ -118,3 +118,36 @@ angular.module('starter.services', [])
  }
  */
 //$rootScope.$broadcast('myService:getUserConfigSuccess');
+
+
+/*
+ var promise1 = $q(function(resolve, reject) {
+ setTimeout(function() {
+
+ if (xxxxx = localStorageService.get("usernameData")) {
+ resolve(xxxxx);
+ } else {
+ reject('出错咯,开始抢折扣卷吧!');
+ }
+ }, 0);
+ });
+ promise1.then(function(xxxxxx) {
+ $ionicPopup.alert({
+ title: '已登录帐号: ' + xxxxxx
+ });
+ showAlreadyRegistered = xxxxxx
+ console.log(xxxxxx)
+ $http.post("http://localhost:3000/api/user", {
+ "username": xxxxxx,
+ }).success(function (data) {
+ possession = data;
+ console.log(possession)
+ })
+ $state.go('tab.coupon');
+ }, function(reason) {
+ $ionicPopup.alert({
+ title: '请注册帐号'
+ });
+ $state.go('tab.register');
+ });
+ */
