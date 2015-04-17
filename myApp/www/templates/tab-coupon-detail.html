@@ -20,30 +20,30 @@
           {{coupon.productDetail}}
         </p>
         <p>
-          <a href="#" class="subdued font">1 顶</a>
-          <a href="#" class="subdued font">{{commentLength(coupon.comment)}}评价</a>
+          <!--<a href="#" class="subdued font">1 顶</a>-->
+          <a href="#" class="subdued font">{{commentLength}}评价</a>
         </p>
       </div>
 
       <div class="item tabs tabs-secondary tabs-icon-left">
-        <a class="tab-item" href="#">
-          <i class="icon ion-thumbsup"></i>
-          顶
-        </a>
-        <a class="tab-item" ng-click="showComment=!showComment">
-          <i class="icon ion-chatbox"></i>
-          评价
-        </a>
-      </div>
-        <div ng-show="showComment">
-            <input class="comment" type="text" ng-model="comment.comment">
-            <button ng-click="submitComment()">提交</button>
-        </div>
-      <div ng-repeat = "xxx in comment | orderBy : '-date'">
-        <div>{{xxx.title}}</div>
-        <div>{{xxx.date|date:'yyyy年MM月dd日HH时mm分'}}</div>
-      </div>
+        <!-- <a class="tab-item" href="#">
+           <i class="icon ion-thumbsup"></i>
+           赞
+         </a>-->
+         <a class="tab-item" ng-click="changeShowComment()">
+           <i class="icon ion-chatbox"></i>
+           评价
+         </a>
+       </div>
+         <div ng-if="showComment">
+             <input class="comment" type="text" ng-model="comment.comment">
+             <button ng-click="submitComment()">提交</button>
+         </div>
+       <div ng-repeat = "xxx in comment | orderBy : '-date'">
+         <div>{{xxx.title}}</div>
+         <div>{{xxx.date|date:'yyyy年MM月dd日HH时mm分'}}</div>
+       </div>
 
-    </div>
-  </ion-content>
-</ion-view>
+     </div>
+   </ion-content>
+ </ion-view>
