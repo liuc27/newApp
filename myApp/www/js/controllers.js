@@ -142,7 +142,8 @@ console.log($scope.showComment)
     })
     .controller('registerCtrl', function ($scope,$rootScope, $ionicPopup, $ionicSideMenuDelegate,localStorageService, types, $http, $state, $q, preLoadAccount) {
 
-        $scope.usernameExist = preLoadAccount
+        $scope.usernameExist = localStorageService.get("usernameData")
+
         $scope.register = function (username, password) {
             $http.post("http://localhost:3000/api/register", {
                 "username": username,
