@@ -44,6 +44,9 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
                     },
                     preLoadAccount: function(types) {
                         return types.autoLoginAccount()
+                    },
+                    possessionData: function(types) {
+                        return types.checkPossession()
                     }
                 }
             })
@@ -74,7 +77,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
                     'tab-account': {
                         templateUrl: 'templates/tab-login.html',
                         controller: 'sss'
-
                     }
                 }
             })
