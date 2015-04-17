@@ -69,6 +69,13 @@ angular.module('starter.services', [])
             fetchFavorite: function (couponId) {
                 return checked[couponId];
             },
+            getCommentLength: function(comment) {
+                if (comment.length) {
+                    return comment.length;
+                } else {
+                    return 0;
+                }
+            },
             allItems: function () {
                 return  $http.get("http://localhost:3000/api/posts").success(function (data) {
                     console.log(data.length)
