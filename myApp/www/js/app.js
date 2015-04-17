@@ -154,11 +154,11 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
             })
 
             .state('tab.favoriteListCouponDetail', {
-                url: '/favoriteList/:favoriteId',
+                url: '/favoriteList/:couponId',
                 views: {
                     'tab-favoriteList': {
                         templateUrl: 'templates/tab-favoriteList-couponDetail.html',
-                        controller: 'favoriteDetailCtrl'
+                        controller: 'CouponDetailCtrl'
                     }
                 }
             });
