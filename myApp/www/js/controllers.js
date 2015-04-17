@@ -49,13 +49,7 @@ angular.module('starter.controllers', [])
         $scope.coupon = types.fetch($stateParams.couponId);
         $scope.favorites = "button icon-left ion-plus button-positive";
         $scope.favoritesText = "点击领取";
-        $scope.commentLength = function(comment){
-            if (comment.length) {
-                return comment.length;
-            }else{
-                return 0;
-            }
-        }
+        $scope.commentLength = types.getCommentLength($scope.coupon.comment)
 
         $scope.clicked = false;
         $scope.comment = types.comment($stateParams.couponId);
@@ -72,6 +66,7 @@ angular.module('starter.controllers', [])
             }).success(function (data) {
                 console.log(data)
                 $scope.comment = data[0].comment
+                $scope.commentLength++;
                 things.data[$stateParams.couponId].comment = data[0].comment
             })
         };
@@ -129,56 +124,10 @@ angular.module('starter.controllers', [])
             }
         };
     })
-
     .controller('favoriteListCtrl', function ($scope, $stateParams, localStorageService, types, things, possessionData) {
         //localStorageService.clearAll()
         $scope.items = things.data;
         $scope.possession = possessionData.data;
-    })
-
-    .controller('favoriteDetailCtrl', function ($scope, $stateParams, localStorageService, types, $http) {
-        console.log(parseInt($stateParams.favoriteId))
-        if (localStorageService.get("checkedData")) {
-            $scope.checked = localStorageService.get("checkedData")
-        }
-        console.log($scope.checked)
-        $scope.items = types.allItems();
-        angular.forEach($scope.checked, function (value) {
-            if (value.id == $stateParams.favoriteId) {
-                $scope.favoriteCoupon = value;
-                console.log(value)
-            }
-        });
-        //$scope.favoriteCoupon = $scope.checked[parseInt($stateParams.favoriteId)];
-        console.log("favoriteCoupon is")
-        console.log($stateParams)
-        $scope.checked = types.favoriteList();
-        $scope.favorites = "button icon-left ion-plus button-positive";
-        $scope.favoritesText = "点击领取";
-        $scope.changeClass = function () {
-            if ($scope.favorites === "button icon-left ion-plus button-positive") {
-                $scope.favorites = "button icon-left ion-heart button-positive";
-                if ($scope.favoritesText === "点击领取")
-                    $scope.favoritesText = "已经领取";
-            }
-        };
-
-
-        $scope.clicked = false;
-        $scope.comment = $scope.favoriteCoupon.comment;
-        var theNewCoupon = angular.copy($scope.coupon);
-
-        $scope.submitComment = function () {
-            var couponName = $scope.favoriteCoupon.name
-            $http.post("http://localhost:3000/api/comment",{
-                "name": couponName,
-                "comment": $scope.comment.comment
-            }).success(function (data) {
-                console.log(data)
-                $scope.comment = data[0].comment
-            })
-        };
-
     })
     .controller('AccountCtrl', function ($scope, types, $http, $ionicSideMenuDelegate, localStorageService,$state,$q) {
 
@@ -215,7 +164,7 @@ angular.module('starter.controllers', [])
                     });
 
                     promise.then(function(greeting) {
-                        console.log(localStorageService.get("usernameData"));
+                        //console.log(localStorageService.get("usernameData"));
                         //alert('Success: ' + greeting);
                         $state.go('tab.coupon');
                     }, function(reason) {
