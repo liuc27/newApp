@@ -122,8 +122,11 @@ app.post('/api/user', function (req, res, next) {
             return next(err)
         } else {
             console.log(data)
-            res.json(data[0].possession)
-
+            if(typeof data[0] == "undefined"){
+              res.send([])
+            }else{
+              res.json(data[0].possession)
+            }
         }
     })
 })
