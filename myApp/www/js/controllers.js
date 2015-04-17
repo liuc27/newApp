@@ -142,8 +142,8 @@ console.log($scope.showComment)
     })
     .controller('registerCtrl', function ($scope,$rootScope, $ionicPopup, $ionicSideMenuDelegate,localStorageService, types, $http, $state, $q, preLoadAccount) {
 
-        $scope.usernameExist = localStorageService.get("usernameData")
-
+        $scope.username = preLoadAccount ? preLoadAccount: localStorageService.get("usernameData")
+        $scope.usernameExist = preLoadAccount
         $scope.register = function (username, password) {
             $http.post("http://localhost:3000/api/register", {
                 "username": username,
@@ -155,6 +155,8 @@ console.log($scope.showComment)
                     });
                 } else {
                     $rootScope.username = username
+                    $scope.username = username
+                    $scope.usernameExist = true
                     $ionicPopup.alert({
                         title: '注册成功！已自动登录!'
                     });
