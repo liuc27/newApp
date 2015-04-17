@@ -1,13 +1,13 @@
 angular.module('starter.controllers', [])
 
-    .controller('CouponCtrl', function ($scope, localStorageService, types, things) {
+    .controller('CouponCtrl', function ($scope, localStorageService, types, things, possessionData) {
 
             console.log(things)
             $scope.items = things.data
-            console.log(types.checkPossession())
+            console.log(possessionData.data)
             $scope.find = function(item) {
                 var exist = false;
-                angular.forEach(types.checkPossession(), function (value) {
+                angular.forEach(possessionData.data, function (value) {
                     if (value == item._id) {
                         exist = true;
                     }
@@ -20,19 +20,32 @@ angular.module('starter.controllers', [])
         $scope.types = types.all();
     })
 
-    .controller('typeDetailCtrl', function ($scope, $stateParams, types, things) {
-        $scope.type = types.get($stateParams.typeId);
+    .controller('typeDetailCtrl', function ($scope, $stateParams, types, things, possessionData) {
+        $scope.type = types.get($stateParams.typeId).type;
+        console.log($scope.type)
         $scope.items = things.data;
+
+        $scope.find = function(item) {
+            var exist = false;
+            angular.forEach(possessionData.data, function (value) {
+                if (value == item._id) {
+                    exist = true;
+                }
+            });
+            return exist;
+        }
     })
 
-    .controller('CouponDetailCtrl', function ($rootScope,$scope, $stateParams, localStorageService, $ionicPopup, types, $http, things) {
+    .controller('CouponDetailCtrl', function ($scope, $stateParams, localStorageService, $ionicPopup, types, $http, things, preLoadAccount,possessionData) {
 
         $scope.items = things.data;
-        $scope.possession = types.checkPossession()
+        $scope.possession = possessionData.data
+        $scope.username = preLoadAccount ? preLoadAccount : $scope.username
+
 
         console.log("stateParams are");
         console.log($stateParams);
-        console.log($scope.items)
+        console.log(possessionData.data)
         $scope.coupon = types.fetch($stateParams.couponId);
         $scope.favorites = "button icon-left ion-plus button-positive";
         $scope.favoritesText = "点击领取";
@@ -59,24 +72,23 @@ angular.module('starter.controllers', [])
             }).success(function (data) {
                 console.log(data)
                 $scope.comment = data[0].comment
+                things.data[$stateParams.couponId].comment = data[0].comment
             })
         };
 
         $scope.changeClass = function () {
             var couponName = $scope.coupon.name
 
-                var username = $rootScope.showAlreadyRegistered ? $rootScope.showAlreadyRegistered : localStorageService.get("usernameData")
-                    console.log(username)
-                console.log($rootScope.showAlreadyRegistered)
+                    console.log($scope.username)
 
             var _id = $scope.coupon._id
             if ($scope.favoritesText === "点击领取") {
-                console.log(couponName)
-                console.log(username)
+                console.log(possessionData)
+                console.log($scope.username)
                 console.log(_id)
                 $http.post("http://localhost:3000/api/add", {
                     "name": couponName,
-                    "username": username,
+                    "username": $scope.username,
                     "_id": _id
 
                 }).success(function (data) {
@@ -89,10 +101,14 @@ angular.module('starter.controllers', [])
                         $ionicPopup.alert({
                             title: '恭喜,成功领取!'
                         });
+                        console.log(typeof possessionData)
+                        console.log(typeof possessionData.data)
+
+                        possessionData.data.push(_id);
+
                         $scope.favoritesText = "已经领取"
                         $scope.favorites = "button icon-left ion-heart button-positive"
                         $scope.coupon.numbers = data
-                        $scope.possession.push(_id)
                         //console.log(data)
                     }
                 })
@@ -101,7 +117,7 @@ angular.module('starter.controllers', [])
 
         $scope.favoriteClass = function () {
             var exist = false
-            angular.forEach($scope.possession, function (value) {
+            angular.forEach(possessionData.data, function (value) {
                 if (value == $scope.coupon._id) {
                     exist = true;
                 }
@@ -114,10 +130,10 @@ angular.module('starter.controllers', [])
         };
     })
 
-    .controller('favoriteListCtrl', function ($scope, $stateParams, localStorageService, types, things) {
+    .controller('favoriteListCtrl', function ($scope, $stateParams, localStorageService, types, things, possessionData) {
         //localStorageService.clearAll()
         $scope.items = things.data;
-        $scope.possession = types.checkPossession();
+        $scope.possession = possessionData.data;
     })
 
     .controller('favoriteDetailCtrl', function ($scope, $stateParams, localStorageService, types, $http) {
@@ -170,11 +186,9 @@ angular.module('starter.controllers', [])
     .controller('MenuCtrl', function ($scope, types, $http, $ionicSideMenuDelegate, localStorageService,$state,$q) {
 
     })
-    .controller('registerCtrl', function ($rootScope,$scope,$ionicPopup, $ionicSideMenuDelegate,localStorageService, types, $http, $state, $q, preLoadAccount) {
+    .controller('registerCtrl', function ($scope,$rootScope, $ionicPopup, $ionicSideMenuDelegate,localStorageService, types, $http, $state, $q, preLoadAccount) {
 
-console.log(preLoadAccount)
-        $scope.showAlreadyRegistered = preLoadAccount
-
+        $scope.usernameExist = preLoadAccount
         $scope.register = function (username, password) {
             $http.post("http://localhost:3000/api/register", {
                 "username": username,
@@ -185,10 +199,7 @@ console.log(preLoadAccount)
                         title: '用户名已经注册，请换用户名！'
                     });
                 } else {
-                    $rootScope.showAlreadyRegistered = username
-
-                    console.log(username)
-                    console.log($rootScope.showAlreadyRegistered)
+                    $rootScope.username = username
                     $ionicPopup.alert({
                         title: '注册成功！已自动登录!'
                     });
@@ -206,7 +217,6 @@ console.log(preLoadAccount)
                     promise.then(function(greeting) {
                         console.log(localStorageService.get("usernameData"));
                         //alert('Success: ' + greeting);
-
                         $state.go('tab.coupon');
                     }, function(reason) {
                         //alert('Failed: ' + reason);
@@ -220,20 +230,5 @@ console.log(preLoadAccount)
         $scope.showTab = function(){
             $scope.showAccountTab = true;
         }
-
-    })
-
-    .controller('MyCtrl', function ($scope, types, $http, localStorageService, $state) {
-        $scope.doRefresh = function () {
-        }
-
-        /*
-         reloadBroad($state.reload())
-         function reloadBroad() {
-         $scope.$broadcast('scroll.refreshComplete')
-         }
-         */
-        $scope.currentTime = new Date();
-        $scope.items = types.allItems();
 
     });
