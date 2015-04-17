@@ -17,6 +17,17 @@ angular.module('starter.filters', [])
             return items.slice().reverse();
         }
     })
+    .filter('typeFilter', function() {
+        return function(items, type) {
+            var result = [];
+            angular.forEach(items,function(itemValue) {
+                if (itemValue.category == type) {
+                    result.push(itemValue)
+                }
+            })
+            return result
+        }
+    })
  /**
  * Created by chao liu on 2014/11/23.
   $scope.find = function(item) {
