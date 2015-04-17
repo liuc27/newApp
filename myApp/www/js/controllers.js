@@ -53,11 +53,13 @@ angular.module('starter.controllers', [])
 
         $scope.clicked = false;
         $scope.comment = types.comment($stateParams.couponId);
-
+$scope.showComment = false;
         console.log($scope.comment)
         var theNewCoupon = angular.copy($scope.coupon);
         //$scope.comment.push({"text":theNewCoupon.productName})
-
+        $scope.changeShowComment = function() {
+            $scope.showComment = !$scope.showComment
+        }
         $scope.submitComment = function () {
             var couponName = $scope.coupon.name
             $http.post("http://localhost:3000/api/comment",{
@@ -65,6 +67,9 @@ angular.module('starter.controllers', [])
                 "comment": $scope.comment.comment
             }).success(function (data) {
                 console.log(data)
+console.log($scope.showComment)
+                $scope.showComment = !$scope.showComment
+
                 $scope.comment = data[0].comment
                 $scope.commentLength++;
                 things.data[$stateParams.couponId].comment = data[0].comment
