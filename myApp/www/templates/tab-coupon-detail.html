@@ -21,10 +21,12 @@
         </p>
         <p>
           <!--<a href="#" class="subdued font">1 顶</a>-->
-          <a href="#" class="subdued font">{{commentLength}}评价</a>
+          <a href="#" class="subdued font">{{commentLength}}留言</a>
+            <a href="#" class="subdued font">评分</a>
+
         </p>
       </div>
-
+        <rating ng-model="rate" max="max"></rating>
       <div class="item tabs tabs-secondary tabs-icon-left">
         <!-- <a class="tab-item" href="#">
            <i class="icon ion-thumbsup"></i>

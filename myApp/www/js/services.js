@@ -6,15 +6,15 @@ angular.module('starter.services', [])
     .factory('types', function ($rootScope, $http, localStorageService, $q, $state,$ionicPopup) {
         var items = [];
         var checked = new Array();
-        var xxxxx, username;
+        var username;
         var possession = [];
-        xxxxx = localStorageService.get("usernameData")
+        username = localStorageService.get("usernameData")
 
         //localStorageService.clearAll();
 
         console.log(localStorageService.get("usernameData"))
 
-        if(xxxxx === null){
+        if(username === null){
             $ionicPopup.alert({
                 title: '请注册帐号'
             });
@@ -24,9 +24,9 @@ angular.module('starter.services', [])
 
         }else{
             $ionicPopup.alert({
-                title: '已登录帐号: ' + xxxxx
+                title: '已登录帐号: ' + username
             });
-            console.log(xxxxx)
+            console.log(username)
             setTimeout(function() {
                 $state.go('tab.coupon');
             },100)
@@ -98,7 +98,7 @@ angular.module('starter.services', [])
                 })
             },
             autoLoginAccount: function(){
-                return xxxxx
+                return username;
             }
         }
     });

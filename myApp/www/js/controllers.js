@@ -42,7 +42,8 @@ angular.module('starter.controllers', [])
         $scope.possession = possessionData.data
         $scope.username = preLoadAccount ? preLoadAccount : $scope.username
 
-
+        $scope.rate = 3;
+        $scope.max = 5;
         console.log("stateParams are");
         console.log($stateParams);
         console.log(possessionData.data)
