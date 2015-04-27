@@ -21,7 +21,6 @@ angular.module('starter.services', [])
             setTimeout(function() {
                 $state.go('tab.register');
             },100)
-
         }else{
             $ionicPopup.alert({
                 title: '已登录帐号: ' + username

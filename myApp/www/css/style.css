@@ -204,9 +204,9 @@ ion-content {
 
 div.item.item-avatar {
 
-    padding-left: 20px;
+    padding-left: 10px;
 
-    padding-top: 20px;
+    padding-top: 10px;
 
     font-family: "Hiragino Sans GB","Helvetica Neue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif, 微软雅黑, 宋体, 楷体_GB2312, 隶书;
 
@@ -336,4 +336,9 @@ ul.rating li {
 }
 ul.rating li i {
     font-size: 30px;
+}
+
+.orangered{
+    color:orangered;
+
 }

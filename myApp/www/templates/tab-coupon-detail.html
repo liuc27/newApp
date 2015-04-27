@@ -21,30 +21,26 @@
         </p>
         <p>
           <!--<a href="#" class="subdued font">1 顶</a>-->
-          <a href="#" class="subdued font">{{commentLength}}留言</a>
-            <a href="#" class="subdued font">评分</a>
+          <a href="#" class="subdued font">评价数:{{commentLength}}</a>
+            <a href="#" class="subdued font">平均评分:{{averageRate}}</a>
 
         </p>
       </div>
-        <rating ng-model="rate" max="max"></rating>
       <div class="item tabs tabs-secondary tabs-icon-left">
-        <!-- <a class="tab-item" href="#">
-           <i class="icon ion-thumbsup"></i>
-           赞
-         </a>-->
          <a class="tab-item" ng-click="changeShowComment()">
            <i class="icon ion-chatbox"></i>
            评价
          </a>
        </div>
          <div ng-if="showComment">
+             <rating data-ng-model="rate.value" max="max"></rating>评分:{{rate.value}}
              <input class="comment" type="text" ng-model="comment.comment">
              <button ng-click="submitComment()">提交</button>
          </div>
-       <div ng-repeat = "xxx in comment | orderBy : '-date'">
-         <div>{{xxx.title}}</div>
-         <div>{{xxx.date|date:'yyyy年MM月dd日HH时mm分'}}</div>
-       </div>
+        <div ng-repeat = "xxx in comment | orderBy : '-date'">
+            <div>{{xxx.title}}  评分:{{xxx.rate.value}}</div>
+            <div>{{xxx.username}}  {{xxx.date|date:'yyyy年MM月dd日HH时mm分'}}</div>
+        </div>
 
      </div>
    </ion-content>

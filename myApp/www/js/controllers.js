@@ -42,7 +42,7 @@ angular.module('starter.controllers', [])
         $scope.possession = possessionData.data
         $scope.username = preLoadAccount ? preLoadAccount : $scope.username
 
-        $scope.rate = 3;
+        $scope.rate = {value:3};
         $scope.max = 5;
         console.log("stateParams are");
         console.log($stateParams);
@@ -54,7 +54,19 @@ angular.module('starter.controllers', [])
 
         $scope.clicked = false;
         $scope.comment = types.comment($stateParams.couponId);
-$scope.showComment = false;
+        var sumRate = 0, lengthRate = 0;
+        console.log($scope.comment)
+        angular.forEach($scope.comment, function (value) {
+            if(value.rate) {
+                if (value.rate.value > 0) {
+                    sumRate += value.rate.value;
+                    lengthRate++;
+                }
+            }
+        })
+        $scope.averageRate = (sumRate/lengthRate).toFixed(2)!="NaN" ? (sumRate/lengthRate).toFixed(2) : "暂无";
+
+        $scope.showComment = false;
         console.log($scope.comment)
         var theNewCoupon = angular.copy($scope.coupon);
         //$scope.comment.push({"text":theNewCoupon.productName})
@@ -65,15 +77,19 @@ $scope.showComment = false;
             var couponName = $scope.coupon.name
             $http.post("http://localhost:3000/api/comment",{
                 "name": couponName,
-                "comment": $scope.comment.comment
+                "username":$scope.username,
+                "comment": $scope.comment.comment,
+                "rate": $scope.rate
             }).success(function (data) {
                 console.log(data)
-console.log($scope.showComment)
+                console.log($scope.showComment)
                 $scope.showComment = !$scope.showComment
 
-                $scope.comment = data[0].comment
+                $scope.comment = data
+                $scope.averageRate = ((sumRate+$scope.rate.value)/(lengthRate+1)).toFixed(2);
+
                 $scope.commentLength++;
-                things.data[$stateParams.couponId].comment = data[0].comment
+                things.data[$stateParams.couponId].comment = data
             })
         };
 
@@ -146,43 +162,49 @@ console.log($scope.showComment)
         $scope.username = preLoadAccount ? preLoadAccount: localStorageService.get("usernameData")
         $scope.usernameExist = preLoadAccount
         $scope.register = function (username, password) {
-            $http.post("http://localhost:3000/api/register", {
-                "username": username,
-                "password": password
-            }).success(function (data) {
-                if (data === "already registered") {
-                    $ionicPopup.alert({
-                        title: '用户名已经注册，请换用户名！'
-                    });
-                } else {
-                    $rootScope.username = username
-                    $scope.username = username
-                    $scope.usernameExist = true
-                    $ionicPopup.alert({
-                        title: '注册成功！已自动登录!'
-                    });
+            if(username == null || password == null){
+                $ionicPopup.alert({
+                    title: '请输入正确的用户名和密码！'
+                });
+            }else {
+                $http.post("http://localhost:3000/api/register", {
+                    "username": username,
+                    "password": password
+                }).success(function (data) {
+                    if (data === "already registered") {
+                        $ionicPopup.alert({
+                            title: '用户名已经注册，请换用户名！'
+                        });
+                    } else {
+                        $rootScope.username = username
+                        $scope.username = username
+                        $scope.usernameExist = true
+                        $ionicPopup.alert({
+                            title: '注册成功！已自动登录!'
+                        });
 
-                    var promise = $q(function(resolve, reject) {
-                        setTimeout(function() {
-                            if (localStorageService.set("usernameData", username)) {
-                                resolve('开始抢折扣卷吧!');
-                            } else {
-                                reject('出错咯,开始抢折扣卷吧!');
-                            }
-                        }, 10);
-                    });
+                        var promise = $q(function(resolve, reject) {
+                            setTimeout(function() {
+                                if (localStorageService.set("usernameData", username)) {
+                                    resolve('开始抢折扣卷吧!');
+                                } else {
+                                    reject('出错咯,开始抢折扣卷吧!');
+                                }
+                            }, 10);
+                        });
 
-                    promise.then(function(greeting) {
-                        //console.log(localStorageService.get("usernameData"));
-                        //alert('Success: ' + greeting);
-                        $state.go('tab.coupon');
-                    }, function(reason) {
-                        //alert('Failed: ' + reason);
-                        $state.go('tab.coupon');
-                    });
+                        promise.then(function(greeting) {
+                            //console.log(localStorageService.get("usernameData"));
+                            //alert('Success: ' + greeting);
+                            $state.go('tab.coupon');
+                        }, function(reason) {
+                            //alert('Failed: ' + reason);
+                            $state.go('tab.coupon');
+                        });
 
-                }
-            });
+                    }
+                });
+            }
         };
 
         $scope.showTab = function(){

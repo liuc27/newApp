@@ -157,7 +157,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
                 url: '/favoriteList/:couponId',
                 views: {
                     'tab-favoriteList': {
-                        templateUrl: 'templates/tab-favoriteList-couponDetail.html',
+                        templateUrl: 'templates/tab-coupon-detail.html',
                         controller: 'CouponDetailCtrl'
                     }
                 }

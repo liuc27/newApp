@@ -185,13 +185,16 @@ app.post('/api/add', function (req, res, next) {
 
 
 app.post('/api/comment', function (req, res, next) {
+    console.log(req.body);
     Post.update({
         "name": req.body.name
     }, {
         $push: {
             "comment": {
                 title: req.body.comment,
-                date: Date.now()
+                date: Date.now(),
+                username: req.body.username,
+                rate: req.body.rate
             }
         }
     }, function () {
@@ -201,7 +204,11 @@ app.post('/api/comment', function (req, res, next) {
             if (err) {
                 return next(err)
             } else {
-                res.send(data)
+              if(typeof data[0] == "undefined"){
+                res.send([])
+              }else{
+                res.json(data[0].comment)
+              }
             }
         })
     })
