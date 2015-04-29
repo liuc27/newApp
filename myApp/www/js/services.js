@@ -76,7 +76,7 @@ angular.module('starter.services', [])
                 }
             },
             allItems: function () {
-                return  $http.get("http://localhost:3000/api/posts").success(function (data) {
+                return  $http.get("http://120.24.168.7:3000/api/posts").success(function (data) {
                     console.log(data.length)
                     console.log(data)
                     items = data
@@ -90,7 +90,7 @@ angular.module('starter.services', [])
                 return (items[couponId].comment) ? items[couponId].comment : false;
             },
             checkPossession: function(){
-                return $http.post("http://localhost:3000/api/user", {
+                return $http.post("http://120.24.168.7:3000/api/user", {
                     "username": localStorageService.get("usernameData")
                 }).success(function (data) {
                     return data;

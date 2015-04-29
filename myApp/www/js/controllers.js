@@ -75,7 +75,7 @@ angular.module('starter.controllers', [])
         }
         $scope.submitComment = function () {
             var couponName = $scope.coupon.name
-            $http.post("http://localhost:3000/api/comment",{
+            $http.post("http://120.24.168.7:3000/api/comment",{
                 "name": couponName,
                 "username":$scope.username,
                 "comment": $scope.comment.comment,
@@ -103,7 +103,7 @@ angular.module('starter.controllers', [])
                 console.log(possessionData)
                 console.log($scope.username)
                 console.log(_id)
-                $http.post("http://localhost:3000/api/add", {
+                $http.post("http://120.24.168.7:3000/api/add", {
                     "name": couponName,
                     "username": $scope.username,
                     "_id": _id
@@ -167,7 +167,7 @@ angular.module('starter.controllers', [])
                     title: '请输入正确的用户名和密码！'
                 });
             }else {
-                $http.post("http://localhost:3000/api/register", {
+                $http.post("http://120.24.168.7:3000/api/register", {
                     "username": username,
                     "password": password
                 }).success(function (data) {
