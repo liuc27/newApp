@@ -8,6 +8,17 @@ var Type = require('./models/Types')
 var User = require('./models/user')
 var jwt = require('jwt-simple')
 var _ = require('lodash')
+var Limiter = require('express-rate-limiter');
+var MemoryStore = require('express-rate-limiter/lib/memoryStore');
+var limiterGet = new Limiter({ db : new MemoryStore() });
+var limiterPost = new Limiter({ db : new MemoryStore() });
+var limiterPostAll = new Limiter({ db : new MemoryStore() });
+var limiterUser = new Limiter({ db : new MemoryStore() });
+var limiterTypes = new Limiter({ db : new MemoryStore() });
+var limiterAdd = new Limiter({ db : new MemoryStore() });
+var limiterReplace = new Limiter({ db : new MemoryStore() });
+var limiterComment = new Limiter({ db : new MemoryStore() });
+var limiterRegister = new Limiter({ db : new MemoryStore() });
 var LocalStorage = require('node-localstorage').LocalStorage
 localStorage = new LocalStorage('./scratch')
 
@@ -17,11 +28,11 @@ var secretKey = 'supersecretkey'
 
 var logger = require('morgan')
 app.use(bodyParser.json({
-    limit: '50mb'
+    limit: '600kb'
 }))
 app.use(logger('dev'))
 app.use(express.static(__dirname))
-app.get('/api/posts', function (req, res, next) {
+app.get('/api/posts', limiterGet.middleware({innerLimit: 10, outerLimit: 60}),function (req, res, next) {
     Post.find({}, function (err, posts) {
         if (err) {
             return next(err)
@@ -31,7 +42,7 @@ app.get('/api/posts', function (req, res, next) {
 
 })
 
-app.post('/api/posts', function (req, res, next) {
+app.post('/api/posts', limiterPost.middleware({innerLimit: 10, outerLimit: 60}),function (req, res, next) {
     var idNumber;
 
     Post.find({
@@ -62,7 +73,7 @@ app.post('/api/posts', function (req, res, next) {
 })
 
 
-app.post('/api/postAll', function (req, res, next) {
+app.post('/api/postAll', limiterPostAll.middleware({innerLimit: 10, outerLimit: 60}),function (req, res, next) {
     var idNumber;
     Post.find({}, function (err, posts) {
         if (err) {
@@ -101,8 +112,8 @@ var callback = function (idNumber, req, res) {
 
 
 
-
-app.get('/api/user', function (req, res, next) {
+/*
+app.get('/api/user',function (req, res, next) {
     User.find(function (err, data) {
         if (err) {
             return next(err)
@@ -110,20 +121,22 @@ app.get('/api/user', function (req, res, next) {
         res.json(data)
     })
 })
+*/
 
 
-app.post('/api/user', function (req, res, next) {
+app.post('/api/user', limiterUser.middleware({innerLimit: 10, outerLimit: 60}),function (req, res, next) {
     User.find({
         username: req.body.username
     }, function (err, data) {
         console.log(data)
         console.log(req.body.username)
         if (err) {
-            return next(err)
+          res.send("not exist")
         } else {
             console.log(data)
             if(typeof data[0] == "undefined"){
-              res.send([])
+              res.send("not exist")
+              console.log(data[0])
             }else{
               res.json(data[0].possession)
             }
@@ -132,7 +145,7 @@ app.post('/api/user', function (req, res, next) {
 })
 
 
-app.post('/api/types', function (req, res, next) {
+app.post('/api/types', limiterTypes.middleware({innerLimit: 10, outerLimit: 60}),function (req, res, next) {
     var type = new Type({
         id: req.body.id,
         name: req.body.name,
@@ -146,7 +159,7 @@ app.post('/api/types', function (req, res, next) {
     })
 })
 
-app.post('/api/add', function (req, res, next) {
+app.post('/api/add', limiterAdd.middleware({innerLimit: 10, outerLimit: 60}),function (req, res, next) {
     console.log(req.body)
     Post.update({
         "name": req.body.name
@@ -184,7 +197,7 @@ app.post('/api/add', function (req, res, next) {
 })
 
 
-app.post('/api/comment', function (req, res, next) {
+app.post('/api/comment', limiterComment.middleware({innerLimit: 1,outerTimeLimit:3600000, outerLimit: 1}),function (req, res, next) {
     console.log(req.body);
     Post.update({
         "name": req.body.name
@@ -214,7 +227,7 @@ app.post('/api/comment', function (req, res, next) {
     })
 })
 
-app.post('/api/replace', function (req, res, next) {
+app.post('/api/replace', limiterReplace.middleware({innerLimit: 10, outerLimit: 60}),function (req, res, next) {
 
     Post.update({
         "name": req.body.name
@@ -242,7 +255,7 @@ app.post('/api/replace', function (req, res, next) {
     })
 })
 
-app.post('/api/register', function (req, res, next) {
+app.post('/api/register', limiterRegister.middleware({innerLimit: 10, outerLimit: 60}),function (req, res, next) {
     var name = req.body.username
     var password = req.body.password
     User.find({}, function (err, data) {
@@ -283,11 +296,13 @@ function findUsername(users, user) {
 function validUser(user, password) {
     return user.password === password
 }
-app.get('/api/user', function (req, res, next) {
+/*
+app.get('/api/user', limiter.middleware({innerLimit: 10, outerLimit: 60}),function (req, res, next) {
     var token = req.headers['x-auth']
     var user = jwt.decode(token, secretKey)
     res.json(user)
 })
+*/
 
 app.listen(3000, function () {
     console.log('server listening on', 3000)

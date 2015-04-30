@@ -36,21 +36,23 @@ angular.module('starter.controllers', [])
         }
     })
 
-    .controller('CouponDetailCtrl', function ($scope, $stateParams, localStorageService, $ionicPopup, types, $http, things, preLoadAccount,possessionData) {
+    .controller('CouponDetailCtrl', function ($scope, $stateParams, localStorageService, $ionicPopup,$ionicScrollDelegate,types, $http, things, preLoadAccount,possessionData) {
 
         $scope.items = things.data;
-        $scope.possession = possessionData.data
-        $scope.username = preLoadAccount ? preLoadAccount : $scope.username
+        $scope.possession = possessionData.date
 
+        $scope.username = preLoadAccount ? preLoadAccount : $scope.username
         $scope.rate = {value:3};
         $scope.max = 5;
         console.log("stateParams are");
         console.log($stateParams);
         console.log(possessionData.data)
         $scope.coupon = types.fetch($stateParams.couponId);
+        console.log($scope.coupon)
         $scope.favorites = "button icon-left ion-plus button-positive";
         $scope.favoritesText = "点击领取";
         $scope.commentLength = types.getCommentLength($scope.coupon.comment)
+        $scope.disableClick = {value:false}
 
         $scope.clicked = false;
         $scope.comment = types.comment($stateParams.couponId);
@@ -72,10 +74,15 @@ angular.module('starter.controllers', [])
         //$scope.comment.push({"text":theNewCoupon.productName})
         $scope.changeShowComment = function() {
             $scope.showComment = !$scope.showComment
+            $ionicScrollDelegate.scrollBy(0,100);
         }
         $scope.submitComment = function () {
             var couponName = $scope.coupon.name
-            $http.post("http://120.24.168.7:3000/api/comment",{
+            $scope.disableClick.value = true
+
+            if($scope.username){
+
+                $http.post("http://120.24.168.7:3000/api/comment",{
                 "name": couponName,
                 "username":$scope.username,
                 "comment": $scope.comment.comment,
@@ -90,45 +97,74 @@ angular.module('starter.controllers', [])
 
                 $scope.commentLength++;
                 things.data[$stateParams.couponId].comment = data
-            })
+            }).error(function(data){
+                    console.log(data)
+                    if(data == "Rate limit exceeded"){
+                    $ionicPopup.alert({
+                            title: "为防止刷分,用户无法频繁评论,请见谅!"
+                        }
+
+                    )}else{
+                        $ionicPopup.alert({
+                            title: "当前IP暂时禁止评论"
+                        })
+                    }
+                })
+
+            } else{
+                $ionicPopup.alert({
+                    title: '请先注册'
+                })
+                $scope.disableClick.value = true
+            }
         };
 
         $scope.changeClass = function () {
             var couponName = $scope.coupon.name
+            $scope.disableClick.value = true
+            console.log($scope.isDisabled)
+            console.log($scope.isDisabled)
 
+            console.log($scope.disableClick.value)
+            if($scope.username){
+                var _id = $scope.coupon._id
+                if ($scope.favoritesText === "点击领取") {
+                    console.log(possessionData)
                     console.log($scope.username)
+                    console.log(_id)
+                    $http.post("http://120.24.168.7:3000/api/add", {
+                        "name": couponName,
+                        "username": $scope.username,
+                        "_id": _id
 
-            var _id = $scope.coupon._id
-            if ($scope.favoritesText === "点击领取") {
-                console.log(possessionData)
-                console.log($scope.username)
-                console.log(_id)
-                $http.post("http://120.24.168.7:3000/api/add", {
-                    "name": couponName,
-                    "username": $scope.username,
-                    "_id": _id
+                    }).success(function (data) {
+                        if (data === "couldn't find") {
+                            $ionicPopup.alert({
+                                title: '非常抱歉,库存不足'
+                            })
+                            $scope.favoritesText = "无法领取"
+                        } else {
+                            $ionicPopup.alert({
+                                title: '恭喜,成功领取!'
+                            });
+                            console.log( possessionData)
+                            console.log( possessionData.data)
 
-                }).success(function (data) {
-                    if (data === "couldn't find") {
-                        $ionicPopup.alert({
-                            title: '非常抱歉,库存不足'
-                        })
-                        $scope.favoritesText = "无法领取"
-                    } else {
-                        $ionicPopup.alert({
-                            title: '恭喜,成功领取!'
-                        });
-                        console.log(typeof possessionData)
-                        console.log(typeof possessionData.data)
+                            possessionData.data.push(_id);
 
-                        possessionData.data.push(_id);
-
-                        $scope.favoritesText = "已经领取"
-                        $scope.favorites = "button icon-left ion-heart button-positive"
-                        $scope.coupon.numbers = data
-                        //console.log(data)
-                    }
+                            $scope.favoritesText = "已经领取"
+                            $scope.favorites = "button icon-left ion-heart button-positive"
+                            $scope.coupon.numbers = data
+                            //console.log(data)
+                        }
+                    })
+                }
+            } else{
+                $ionicPopup.alert({
+                    title: '请先注册'
                 })
+                $scope.disableClick.value = false
+
             }
         }
 
@@ -142,7 +178,7 @@ angular.module('starter.controllers', [])
             if (exist) {
                 $scope.favorites = "button icon-left ion-heart button-positive";
                 $scope.favoritesText = "已经领取";
-                $scope.isDisabled = true
+                $scope.disableClick.value = true
             }
         };
     })

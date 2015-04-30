@@ -9,7 +9,6 @@ angular.module('starter.services', [])
         var username;
         var possession = [];
         username = localStorageService.get("usernameData")
-
         //localStorageService.clearAll();
 
         console.log(localStorageService.get("usernameData"))
@@ -63,16 +62,22 @@ angular.module('starter.services', [])
                 return types[typeId];
             },
             fetch: function (couponId) {
-                return items[couponId];
+                var x = [];
+                angular.forEach(items, function (value) {
+                    if (value.id == couponId) {
+                            x = value;
+                    }
+                })
+                return x;
             },
             fetchFavorite: function (couponId) {
                 return checked[couponId];
             },
             getCommentLength: function(comment) {
-                if (comment.length) {
+                if (typeof comment === "undefined") {
+                    return 0
+                } else{
                     return comment.length;
-                } else {
-                    return 0;
                 }
             },
             allItems: function () {
@@ -93,7 +98,13 @@ angular.module('starter.services', [])
                 return $http.post("http://120.24.168.7:3000/api/user", {
                     "username": localStorageService.get("usernameData")
                 }).success(function (data) {
-                    return data;
+                    console.log(data);
+                    if (data == "not exist"){
+                        localStorageService.remove("usernameData");
+                        username = null;
+                    }else{
+                        return data;
+                    }
                 })
             },
             autoLoginAccount: function(){

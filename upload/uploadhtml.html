@@ -69,7 +69,7 @@
 
             $scope.sendJson = function () {
                 $scope.user.timeLimit = new Date($scope.year, $scope.month - 1, $scope.day, '23', '59', '59');
-                $http.post("http://localhost:3000/api/posts", $scope.user).success(function (data) {
+              $http.post("http://localhost:3000/api/posts", $scope.user).success(function (data) {
                     console.log(data)
                     if (data == "already exists") {
                         alert("商品名已经存在，推送失败")
@@ -83,7 +83,7 @@
 
             $scope.replace = function () {
                 $scope.user.timeLimit = new Date($scope.year, $scope.month - 1, $scope.day, '23', '59', '59');
-                $http.post("http://localhost:3000/api/replace", $scope.user).success(function (data) {
+              $http.post("http://localhost:3000/api/replace", $scope.user).success(function (data) {
                     console.log(data)
                     if (data = "OK")
                         alert("successfully replaced")
