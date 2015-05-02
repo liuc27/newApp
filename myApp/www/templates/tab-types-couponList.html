@@ -6,6 +6,8 @@
 -->
 <ion-view title="{{type.name}}">
   <ion-content has-header="true" padding="true">
+      <ion-refresher pulling-text="刷新中" on-refresh="doRefresh()">
+      </ion-refresher>
     <div class="product bordLine list  borderRadius" collection-repeat="item in items | typeFilter : type | orderBy :'-id'">
       <a href="#/tab/tab-types-couponList-detail/{{item.id}}" class=" item item-thumbnail-left borderRadius5">
         <img class="product_image" ng-src="{{ item.image }}">

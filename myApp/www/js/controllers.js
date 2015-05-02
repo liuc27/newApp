@@ -1,30 +1,50 @@
 angular.module('starter.controllers', [])
 
-    .controller('CouponCtrl', function ($scope, localStorageService, types, things, possessionData) {
+    .controller('CouponCtrl', function ($scope,$http, $rootScope, localStorageService, types, things, possessionData) {
 
-            console.log(things)
-            $scope.items = things.data
-            console.log(possessionData.data)
-            $scope.find = function(item) {
-                var exist = false;
-                angular.forEach(possessionData.data, function (value) {
-                    if (value == item._id) {
-                        exist = true;
-                    }
-                });
-                return exist;
-            }
+        console.log(things)
+        $scope.items = things.data
+        console.log(possessionData.data)
+        $scope.find = function (item) {
+            var exist = false;
+            angular.forEach(possessionData.data, function (value) {
+                if (value == item._id) {
+                    exist = true;
+                }
+            });
+            return exist;
+        }
+        $scope.doRefresh = function () {
+            $http.get("http://120.24.168.7:3000/api/posts").success(function (data) {
+                $rootScope.items = data
+                $scope.items = data
+                things.data = data
+
+            }).finally(function () {
+                // Stop the ion-refresher from spinning
+                $scope.$broadcast('scroll.refreshComplete');
+            });
+        }
     })
 
     .controller('typesCtrl', function ($scope, types) {
         $scope.types = types.all();
     })
 
-    .controller('typeDetailCtrl', function ($scope, $stateParams, types, things, possessionData) {
+    .controller('typeDetailCtrl', function ($scope, $http,$rootScope,$stateParams, types, things, possessionData) {
         $scope.type = types.get($stateParams.typeId).type;
         console.log($scope.type)
         $scope.items = things.data;
-
+        $scope.doRefresh = function () {
+            $http.get("http://120.24.168.7:3000/api/posts").success(function (data) {
+                $rootScope.items = data
+                $scope.items = data
+                things.data = data
+            }).finally(function () {
+                // Stop the ion-refresher from spinning
+                $scope.$broadcast('scroll.refreshComplete');
+            });
+        }
         $scope.find = function(item) {
             var exist = false;
             angular.forEach(possessionData.data, function (value) {
@@ -83,28 +103,28 @@ angular.module('starter.controllers', [])
             if($scope.username){
 
                 $http.post("http://120.24.168.7:3000/api/comment",{
-                "name": couponName,
-                "username":$scope.username,
-                "comment": $scope.comment.comment,
-                "rate": $scope.rate
-            }).success(function (data) {
-                console.log(data)
-                console.log($scope.showComment)
-                $scope.showComment = !$scope.showComment
+                    "name": couponName,
+                    "username":$scope.username,
+                    "comment": $scope.comment.comment,
+                    "rate": $scope.rate
+                }).success(function (data) {
+                    console.log(data)
+                    console.log($scope.showComment)
+                    $scope.showComment = !$scope.showComment
 
-                $scope.comment = data
-                $scope.averageRate = ((sumRate+$scope.rate.value)/(lengthRate+1)).toFixed(2);
+                    $scope.comment = data
+                    $scope.averageRate = ((sumRate+$scope.rate.value)/(lengthRate+1)).toFixed(2);
 
-                $scope.commentLength++;
-                things.data[$stateParams.couponId].comment = data
-            }).error(function(data){
+                    $scope.commentLength++;
+                    things.data[$stateParams.couponId].comment = data
+                }).error(function(data){
                     console.log(data)
                     if(data == "Rate limit exceeded"){
-                    $ionicPopup.alert({
-                            title: "为防止刷分,用户无法频繁评论,请见谅!"
-                        }
+                        $ionicPopup.alert({
+                                title: "为防止刷分,用户无法频繁评论,请见谅!"
+                            }
 
-                    )}else{
+                        )}else{
                         $ionicPopup.alert({
                             title: "当前IP暂时禁止评论"
                         })
