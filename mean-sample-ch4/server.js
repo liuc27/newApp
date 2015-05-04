@@ -52,7 +52,8 @@ app.use(logger('dev'))
 app.use(express.static(__dirname))
 app.get('/api/posts', limiterGet.middleware({
     innerLimit: 10,
-    outerLimit: 60
+    outerLimit: 60,
+    headers: false
 }), function (req, res, next) {
     Post.find({}, function (err, posts) {
         if (err) {
@@ -65,7 +66,8 @@ app.get('/api/posts', limiterGet.middleware({
 
 app.post('/api/posts', limiterPost.middleware({
     innerLimit: 10,
-    outerLimit: 60
+    outerLimit: 60,
+    headers: false
 }), function (req, res, next) {
     var idNumber;
 
@@ -99,7 +101,8 @@ app.post('/api/posts', limiterPost.middleware({
 
 app.post('/api/postAll', limiterPostAll.middleware({
     innerLimit: 10,
-    outerLimit: 60
+    outerLimit: 60,
+    headers: false
 }), function (req, res, next) {
     var idNumber;
     Post.find({}, function (err, posts) {
@@ -117,6 +120,7 @@ app.post('/api/postAll', limiterPostAll.middleware({
 })
 
 var callback = function (idNumber, req, res) {
+    var imageURL = "http://120.24.168.7:3000/images/" + req.body.name + ".jpg";
     var post = new Post({
         id: idNumber,
         name: req.body.name,
@@ -126,8 +130,20 @@ var callback = function (idNumber, req, res) {
         productIntroduction: req.body.productIntroduction,
         productDetail: req.body.productDetail,
         timeLimit: req.body.timeLimit,
-        image: req.body.image
+        image: imageURL
     })
+
+    data = req.body.image;
+    var base64Data, binaryData;
+
+    base64Data = data.replace(/^data:image\/jpeg;base64,/, "").replace(/^data:image\/png;base64,/, "");
+    base64Data += base64Data.replace('+', ' ');
+    binaryData = new Buffer(base64Data, 'base64').toString('binary');
+
+    fs.writeFile("images/" + req.body.name + ".jpg", binaryData, "binary", function (err) {
+        console.log(err); // writes out file without error, but it's not a valid image
+    });
+
 
     post.save(function (err, post) {
         if (err) {
@@ -153,7 +169,8 @@ app.get('/api/user',function (req, res, next) {
 
 app.post('/api/user', limiterUser.middleware({
     innerLimit: 10,
-    outerLimit: 60
+    outerLimit: 60,
+    headers: false
 }), function (req, res, next) {
     User.find({
         username: req.body.username
@@ -177,7 +194,8 @@ app.post('/api/user', limiterUser.middleware({
 
 app.post('/api/types', limiterTypes.middleware({
     innerLimit: 10,
-    outerLimit: 60
+    outerLimit: 60,
+    headers: false
 }), function (req, res, next) {
     var type = new Type({
         id: req.body.id,
@@ -194,7 +212,8 @@ app.post('/api/types', limiterTypes.middleware({
 
 app.post('/api/add', limiterAdd.middleware({
     innerLimit: 10,
-    outerLimit: 60
+    outerLimit: 60,
+    headers: false
 }), function (req, res, next) {
     console.log(req.body)
     Post.update({
@@ -236,7 +255,8 @@ app.post('/api/add', limiterAdd.middleware({
 app.post('/api/comment', limiterComment.middleware({
     innerLimit: 1,
     outerTimeLimit: 3600000,
-    outerLimit: 1
+    outerLimit: 1,
+    headers: false
 }), function (req, res, next) {
     console.log(req.body);
     Post.update({
@@ -269,8 +289,10 @@ app.post('/api/comment', limiterComment.middleware({
 
 app.post('/api/replace', limiterReplace.middleware({
     innerLimit: 10,
-    outerLimit: 60
+    outerLimit: 60,
+    headers: false
 }), function (req, res, next) {
+    var imageURL = "http://120.24.168.7:3000/images/" + req.body.name + ".jpg";
 
     Post.update({
         "name": req.body.name
@@ -282,16 +304,30 @@ app.post('/api/replace', limiterReplace.middleware({
         productIntroduction: req.body.productIntroduction,
         productDetail: req.body.productDetail,
         timeLimit: req.body.timeLimit,
-        image: req.body.image
+        image: imageURL
     }, function () {
         Post.find({
             "name": req.body.name
         }, function (err, data) {
-
-            console.log(data)
             if (err) {
                 return next(err)
             } else if (data[0].numbers >= 0) {
+                data = req.body.image;
+                var base64Data, binaryData;
+
+                base64Data = data.replace(/^data:image\/jpeg;base64,/, "").replace(/^data:image\/png;base64,/, "");
+                base64Data += base64Data.replace('+', ' ');
+                binaryData = new Buffer(base64Data, 'base64').toString('binary');
+
+                if (fs.exists("images/" + req.body.name + ".jpg")) {
+                    fs.unlink("images/" + req.body.name + ".jpg", function (err) {
+                        if (err) throw err;
+                        console.log('successfully deleted ');
+                    });
+                }
+                fs.writeFile("images/" + req.body.name + ".jpg", binaryData, "binary", function (err) {
+                    console.log(err); // writes out file without error, but it's not a valid image
+                });
                 res.send("OK")
             }
         })
@@ -300,7 +336,8 @@ app.post('/api/replace', limiterReplace.middleware({
 
 app.post('/api/register', limiterRegister.middleware({
     innerLimit: 10,
-    outerLimit: 60
+    outerLimit: 60,
+    headers: false
 }), function (req, res, next) {
     var name = req.body.username
     var password = req.body.password
